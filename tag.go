@@ -219,9 +219,11 @@ func generateTags(cmd *exec.Cmd) int {
 			fmt.Printf("%s %s\n", tagPrefix(aliasIndex), string(line))
 			aliasIndex++
 		} else {
-			// Empty line. End of grouping, reset curPath context
 			fmt.Println(string(line))
-			curPath = ""
+			if len(colorlessLine) == 0 {
+				// Empty line. End of grouping, reset curPath context.
+				curPath = ""
+			}
 		}
 	}
 	check(scanner.Err())
