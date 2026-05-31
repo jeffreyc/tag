@@ -48,8 +48,7 @@ $ time ( for _ in {1..10}; do tag EXPORT_SYMBOL_GPL >/dev/null 2>&1; done )
 
     - Developers and other platforms
       ```
-      $ go get -u github.com/aykamko/tag/...
-      $ go install github.com/aykamko/tag
+      $ go install github.com/aykamko/tag@latest
       ```
 
 1. By default, `tag` uses `ag` as its search backend. To use `ripgrep` instead, set the environment variable `TAG_SEARCH_PROG=rg`. (To persist this setting, put it in your `bashrc`/`zshrc`.)

@@ -1,24 +1,16 @@
 SHELL:=/bin/bash
 
-GOBUILD=go build -v github.com/aykamko/tag >/dev/null
+GOBUILD=go build -v
 
 build:
 	go build
 
 generate_release_binaries:
 	mkdir -p release; \
-	cd release; \
-	export GOOS=darwin; export GOARCH=386; \
-	${GOBUILD} && zip tag_$${GOOS}_$${GOARCH} tag; \
-	export GOOS=darwin; export GOARCH=amd64; \
-	${GOBUILD} && zip tag_$${GOOS}_$${GOARCH} tag; \
-	export GOOS=linux; export GOARCH=386; \
-	${GOBUILD} && tar -cvzf tag_$${GOOS}_$${GOARCH}.tar.gz tag; \
-	export GOOS=linux; export GOARCH=amd64; \
-	${GOBUILD} && tar -cvzf tag_$${GOOS}_$${GOARCH}.tar.gz tag; \
-	export GOOS=linux; export GOARCH=arm; \
-	${GOBUILD} && tar -cvzf tag_$${GOOS}_$${GOARCH}.tar.gz tag; \
-	export GOOS=windows; export GOARCH=386; \
-	${GOBUILD} && tar -cvzf tag_$${GOOS}_$${GOARCH}.tar.gz tag.exe; \
-	export GOOS=windows; export GOARCH=amd64; \
-	${GOBUILD} && tar -cvzf tag_$${GOOS}_$${GOARCH}.tar.gz tag.exe;
+	GOOS=darwin GOARCH=386 ${GOBUILD} -o release/tag . && zip -j release/tag_darwin_386.zip release/tag; \
+	GOOS=darwin GOARCH=amd64 ${GOBUILD} -o release/tag . && zip -j release/tag_darwin_amd64.zip release/tag; \
+	GOOS=linux GOARCH=386 ${GOBUILD} -o release/tag . && tar -C release -cvzf release/tag_linux_386.tar.gz tag; \
+	GOOS=linux GOARCH=amd64 ${GOBUILD} -o release/tag . && tar -C release -cvzf release/tag_linux_amd64.tar.gz tag; \
+	GOOS=linux GOARCH=arm ${GOBUILD} -o release/tag . && tar -C release -cvzf release/tag_linux_arm.tar.gz tag; \
+	GOOS=windows GOARCH=386 ${GOBUILD} -o release/tag.exe . && tar -C release -cvzf release/tag_windows_386.tar.gz tag.exe; \
+	GOOS=windows GOARCH=amd64 ${GOBUILD} -o release/tag.exe . && tar -C release -cvzf release/tag_windows_amd64.tar.gz tag.exe;
