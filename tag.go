@@ -120,6 +120,7 @@ func generateTags(cmd *exec.Cmd) int {
 	check(err)
 
 	scanner := bufio.NewScanner(stdout)
+	scanner.Buffer(make([]byte, 64*1024), 1024*1024)
 	scanner.Split(bufio.ScanLines)
 
 	var (
@@ -161,6 +162,7 @@ func generateTags(cmd *exec.Cmd) int {
 			curPath = ""
 		}
 	}
+	check(scanner.Err())
 
 	err = cmd.Wait()
 	return extractCmdExitCode(err)
