@@ -67,10 +67,11 @@ var (
 )
 
 type AliasFile struct {
-	filename string
-	fmtStr   string
-	buf      bytes.Buffer
-	writer   *bufio.Writer
+	filename  string
+	aliasPref string
+	cmdFmtStr string
+	buf       bytes.Buffer
+	writer    *bufio.Writer
 }
 
 func NewAliasFile() *AliasFile {
@@ -81,24 +82,43 @@ func NewAliasFile() *AliasFile {
 		`vim -c "call cursor({{.LineNumber}}, {{.ColumnNumber}})" "{{.Filename}}"`)
 
 	a := &AliasFile{
-		fmtStr:   "alias " + aliasPrefix + "{{.MatchIndex}}='" + aliasCmdFmtString + "'\n",
-		filename: aliasFilename,
+		aliasPref: aliasPrefix,
+		cmdFmtStr: aliasCmdFmtString,
+		filename:  aliasFilename,
 	}
 	a.writer = bufio.NewWriter(&a.buf)
 	return a
 }
 
+func shellSingleQuote(s string) string {
+	return "'" + strings.ReplaceAll(s, "'", "'\\''") + "'"
+}
+
+func shellDoubleQuoteEscape(s string) string {
+	replacer := strings.NewReplacer(
+		"\\", "\\\\",
+		"\"", "\\\"",
+		"$", "\\$",
+		"`", "\\`",
+	)
+	return replacer.Replace(s)
+}
+
 func (a *AliasFile) WriteAlias(index int, filename, linenum string, colnum string) {
-	t := template.Must(template.New("alias").Parse(a.fmtStr))
+	t := template.Must(template.New("alias").Parse(a.cmdFmtStr))
 
 	aliasVars := struct {
 		MatchIndex   int
 		Filename     string
 		LineNumber   string
 		ColumnNumber string
-	}{index, filename, linenum, colnum}
+	}{index, shellDoubleQuoteEscape(filename), linenum, colnum}
 
-	err := t.Execute(a.writer, aliasVars)
+	var cmd bytes.Buffer
+	err := t.Execute(&cmd, aliasVars)
+	check(err)
+
+	_, err = fmt.Fprintf(a.writer, "alias %s%s=%s\n", a.aliasPref, fmt.Sprint(index), shellSingleQuote(cmd.String()))
 	check(err)
 }
 
