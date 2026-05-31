@@ -295,7 +295,7 @@ func handleColorSetting(prog string, args []string) {
 }
 
 func main() {
-	searchProg := getEnvDefault("TAG_SEARCH_PROG", "ag")
+	searchProg := getEnvDefault("TAG_SEARCH_PROG", "rg")
 	check(validateSearchProg(searchProg))
 
 	userArgs := os.Args[1:]
