@@ -87,7 +87,41 @@ func NewAliasFile() *AliasFile {
 		filename:  aliasFilename,
 	}
 	a.writer = bufio.NewWriter(&a.buf)
+	a.WriteUnaliases(readAliasNames(aliasFilename, aliasPrefix))
 	return a
+}
+
+func readAliasNames(filename, prefix string) []string {
+	data, err := ioutil.ReadFile(filename)
+	if os.IsNotExist(err) {
+		return nil
+	}
+	check(err)
+
+	var names []string
+	for _, line := range strings.Split(string(data), "\n") {
+		aliasDef, ok := strings.CutPrefix(line, "alias ")
+		if !ok {
+			continue
+		}
+		name, _, ok := strings.Cut(aliasDef, "=")
+		if ok && strings.HasPrefix(name, prefix) && allDigits(strings.TrimPrefix(name, prefix)) {
+			names = append(names, name)
+		}
+	}
+	return names
+}
+
+func allDigits(s string) bool {
+	if len(s) == 0 {
+		return false
+	}
+	for _, r := range s {
+		if r < '0' || r > '9' {
+			return false
+		}
+	}
+	return true
 }
 
 func shellSingleQuote(s string) string {
@@ -120,6 +154,13 @@ func (a *AliasFile) WriteAlias(index int, filename, linenum string, colnum strin
 
 	_, err = fmt.Fprintf(a.writer, "alias %s%s=%s\n", a.aliasPref, fmt.Sprint(index), shellSingleQuote(cmd.String()))
 	check(err)
+}
+
+func (a *AliasFile) WriteUnaliases(names []string) {
+	for _, name := range names {
+		_, err := fmt.Fprintf(a.writer, "unalias %s 2>/dev/null || true\n", shellSingleQuote(name))
+		check(err)
+	}
 }
 
 func (a *AliasFile) WriteFile() {
