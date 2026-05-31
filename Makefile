@@ -19,6 +19,6 @@ generate_release_binaries:
 	export GOOS=linux; export GOARCH=arm; \
 	${GOBUILD} && tar -cvzf tag_$${GOOS}_$${GOARCH}.tar.gz tag; \
 	export GOOS=windows; export GOARCH=386; \
-	${GOBUILD} && tar -cvzf tag_$${GOOS}_$${GOARCH}.tar.gz tag; \
+	${GOBUILD} && tar -cvzf tag_$${GOOS}_$${GOARCH}.tar.gz tag.exe; \
 	export GOOS=windows; export GOARCH=amd64; \
-	${GOBUILD} && tar -cvzf tag_$${GOOS}_$${GOARCH}.tar.gz tag;
+	${GOBUILD} && tar -cvzf tag_$${GOOS}_$${GOARCH}.tar.gz tag.exe;
