@@ -225,7 +225,7 @@ func main() {
 	var tagArgs []string
 
 	switch i := optionIndex(userArgs, "--notag"); {
-	case i > 0:
+	case i >= 0:
 		userArgs = append(userArgs[:i], userArgs[i+1:]...)
 		fallthrough
 	case len(userArgs) == 0: // no arguments; fall back to help message
