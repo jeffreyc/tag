@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"syscall"
 	"text/template"
 
@@ -196,7 +197,7 @@ func constructTagArgs(searchProg string, userArgs []string) []string {
 		case "rg":
 			// ripgrep can't handle more than one --color option, so if the user provides one
 			// we have to explicilty keep tag from passing its own --color option
-			if optionIndex(userArgs, "--color") >= 0 {
+			if _, ok := colorOptionValue(userArgs); ok {
 				return []string{"--heading", "--column"}
 			}
 			return []string{"--heading", "--color", "always", "--column"}
@@ -205,13 +206,28 @@ func constructTagArgs(searchProg string, userArgs []string) []string {
 	return []string{}
 }
 
+func colorOptionValue(args []string) (string, bool) {
+	for i := len(args) - 1; i >= 0; i-- {
+		if args[i] == "--color" {
+			if i+1 < len(args) {
+				return args[i+1], true
+			}
+			return "", true
+		}
+		if value, ok := strings.CutPrefix(args[i], "--color="); ok {
+			return value, true
+		}
+	}
+	return "", false
+}
+
 func handleColorSetting(prog string, args []string) {
 	switch prog {
 	case "ag":
 		color.NoColor = (optionIndex(args, "--nocolor") >= 0)
 	case "rg":
-		colorFlagIdx := optionIndex(args, "--color")
-		color.NoColor = (colorFlagIdx >= 0 && args[colorFlagIdx+1] == "never")
+		colorValue, _ := colorOptionValue(args)
+		color.NoColor = (colorValue == "never")
 	}
 }
 
