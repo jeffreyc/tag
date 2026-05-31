@@ -198,9 +198,9 @@ func constructTagArgs(searchProg string, userArgs []string) []string {
 			// ripgrep can't handle more than one --color option, so if the user provides one
 			// we have to explicilty keep tag from passing its own --color option
 			if _, ok := colorOptionValue(userArgs); ok {
-				return []string{"--heading", "--column"}
+				return []string{"--heading", "--with-filename", "--column"}
 			}
-			return []string{"--heading", "--color", "always", "--column"}
+			return []string{"--heading", "--with-filename", "--color", "always", "--column"}
 		}
 	}
 	return []string{}
