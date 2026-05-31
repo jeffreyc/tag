@@ -31,24 +31,17 @@ $ time ( for _ in {1..10}; do tag EXPORT_SYMBOL_GPL >/dev/null 2>&1; done )
 1. Update to the latest versions of [`ag`](https://github.com/ggreer/the_silver_searcher) or [`ripgrep`](https://github.com/BurntSushi/ripgrep). `ag` in particular must be version `>= 0.25.0`.
 
 1. Install the `tag` binary using one of the following methods.
-    - Homebrew (OSX)
+    - Homebrew (macOS/Linux)
       ```
-      $ brew tap aykamko/tag-ag
+      $ brew tap jeffreyc/tag-ag
       $ brew install tag-ag
       ```
 
-    - AUR (Arch Linux)
-
-      Using your favorite [AUR helper](https://wiki.archlinux.org/index.php/AUR_helpers), install the [tag-ag AUR package](https://aur.archlinux.org/packages/tag-ag/) like this:
-      ```
-      $ aura -A tag-ag
-      ```
-
-    - [Download a compressed binary for your platform](https://github.com/aykamko/tag/releases)
+    - [Download a compressed binary for your platform](https://github.com/jeffreyc/tag/releases)
 
     - Developers and other platforms
       ```
-      $ go install github.com/aykamko/tag@latest
+      $ go install github.com/jeffreyc/tag@latest
       ```
 
 1. By default, `tag` uses `ag` as its search backend. To use `ripgrep` instead, set the environment variable `TAG_SEARCH_PROG=rg`. (To persist this setting, put it in your `bashrc`/`zshrc`.)
@@ -102,8 +95,9 @@ $ time ( for _ in {1..10}; do tag EXPORT_SYMBOL_GPL >/dev/null 2>&1; done )
 
 # License
 
-[MIT](LICENSE)
+[MIT](LICENSE).
 
 # Author
 
-[aykamko](https://github.com/aykamko)
+- v1.x - [aykamko](https://github.com/aykamko)
+- v2.x - [jeffreyc](https://github.com/jeffreyc)

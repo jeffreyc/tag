@@ -1,4 +1,4 @@
-module github.com/aykamko/tag
+module github.com/jeffreyc/tag
 
 go 1.25.0
 
